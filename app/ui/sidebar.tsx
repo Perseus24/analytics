@@ -7,7 +7,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({className}) => {
     return (
-        <div className={`w-16 shadow-lg hover:w-32 transition-all ease-out duration-300 z-30 h-screen absolute left-0 ${className}`}></div>
+        <div className={`w-16 shadow-lg hover:w-32 transition-all ease-out duration-300 h-screen bg-white fixed top-0 left-0 ${className}`}></div>
     );
 };
 
