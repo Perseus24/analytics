@@ -33,6 +33,7 @@ export default function RootLayout({
         className={`${poppins.className} antialiased`}
       >
         {children}
+        <Analytics />
       </body>
     </html>
   );

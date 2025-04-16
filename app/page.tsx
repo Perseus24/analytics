@@ -3,7 +3,6 @@
 import Header from "./ui/header";
 import Post from "./ui/post";
 import { useState, useEffect } from 'react';
-import PieChart  from "./ui/pieChart";
 import { todayPosts } from "./lib/supabase";
 import { Posts } from './lib/definitions';
 import { supabase } from './lib/supabase';
