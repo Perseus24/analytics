@@ -1,119 +1,70 @@
 "use client";
 
 import Header from "./ui/header";
-import Sidebar from "./ui/sidebar";
+import Post from "./ui/post";
 import { useState, useEffect } from 'react';
 import PieChart  from "./ui/pieChart";
-import { fetchDaylioData } from "./lib/supabase";
-import { Daylio} from './lib/definitions';
+import { todayPosts } from "./lib/supabase";
+import { Posts } from './lib/definitions';
+import { supabase } from './lib/supabase';
 
 export default function Home() {
-
-  const [timeDifference, setTimeDifference] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
-  const [divsCount, setDivsCount] = useState(0);
-  const [daylioEmo, setDaylioEmo] = useState<Daylio[]>([]);
-  const currentTime = new Date();
-
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
+  const [post, setPost] = useState<Posts[]>([]);
+  const [createPostText, setCreatePostText] = useState<string>("");
   useEffect(() => {
-    const createdDate = new Date("2025-01-08T11:11:00");
-
-    const countDivCount = async () => {
-      try {
-        const response = await fetch("/api/googleSearch");
-        const data = await response.json();
-        setDivsCount(data.divCount);
-      } catch (e) {
-        console.log(e);
-      }
+    const postsToday = async () => {
+      const data = await todayPosts();
+      setPost(data);
     };
-
-    const interval = setInterval(() => {
-      const currentTime = new Date();
-      const timeDifference = currentTime.getTime() - createdDate.getTime();
-      const totalSeconds = Math.floor(timeDifference / 1000);
-      const days = Math.floor(totalSeconds / (60 * 60 * 24));
-      const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
-      const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
-      const seconds = totalSeconds % 60;
-      setTimeDifference({ days, hours, minutes, seconds });
-    }, 1000);
-
-    const fetchDaylio = async () => {
-      const data = await fetchDaylioData();
-      setDaylioEmo(data);
-    }
-
-    countDivCount();
-    fetchDaylio();
-    return () => clearInterval(interval);
+    postsToday();
   }, []);
 
-  const moodCount = [0,0,0,0,0];
-  daylioEmo.forEach((item)=>{
-    moodCount[item.emoticon-1]++;
-  })
+  const createPost = async () => {
+    const { data, error } = await supabase
+      .from('posts')
+      .insert([
+        {
+          post_text: createPostText,
+        }
+      ])
+      .select();
 
-  const dayliopieData = {
-    labels: ['awful', 'bad', 'meh', 'good', 'rad'],
-    values: moodCount
+    if (error) {
+      console.error('Error creating post:', error.message);
+    } else {
+      setPost((prevPosts) => [data[0], ...prevPosts]);
+      setCreatePostText('');
+    }
   };
-
+  
   return (
-    <div className="flex h-screen w-screen bg-white text-black relative">
-      <Sidebar className="z-10"/>
-      <div className="pl-16 w-full flex flex-col gap-5 ">
+    <div className="flex h-screen w-screen bg-[#F4F4F8] text-black relative">
+      <div className="px-10 w-full flex flex-col gap-5 ">
         <Header />
-        <main className="flex mx-10 gap-5">
-          <div className="flex flex-col w-3/4 gap-5">
-            {/* data numbers  */}
-            <div className="flex w-full gap-3">
-              <div className="rounded-lg bg-white shadow-lg h-16 flex-1 flex flex-col gap-1 px-3 py-2">
-                <p className="text-sm">Time since Creation</p>
-                <p className="text-2xl font-bold">{timeDifference.days}d {timeDifference.hours}h {timeDifference.minutes}m {timeDifference.seconds}s</p>
-              </div>
-              <div className="rounded-lg bg-white shadow-lg h-16 flex-1 flex flex-col gap-1 px-3 py-2">
-                <p className="text-sm">Divs Count</p>
-                <p className="text-2xl font-bold">{divsCount}</p>
-              </div>
-              <div className="rounded-lg bg-white shadow-lg h-16 flex-1 flex flex-col gap-1 px-3 py-2">
-                <p className="text-sm">Word Count</p>
-                <p className="text-2xl font-bold">0</p>
+        <div className="flex gap-10">
+          <main className="flex flex-col gap-5 w-3/5">
+            {
+              post.map((post, index) => (
+                <Post key={index} post={post}/>
+              ))
+            }
+          </main>
+          <aside className="flex flex-col w-2/5 h-min">
+            <div className="flex flex-col gap-4 w-full bg-white rounded-lg shadow-sm px-4 py-3 text-[13px]">
+              <p className="">Anonymous</p>
+              <textarea 
+                rows={6}
+                value={createPostText} 
+                onChange={(e) => setCreatePostText(e.target.value)} 
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none" placeholder="What's on your mind?" />
+              <div className="w-full flex justify-end">
+                <button 
+                  onClick={createPost} 
+                  className="px-4 py-1.5 bg-black text-white rounded-lg">Post</button>
               </div>
             </div>
-            {/* content */}
-            <div className="flex flex-col w-full bg-white rounded-lg shadow-lg px-3 py-3 gap-3">
-              <p>Today is the {currentTime.getDate()}th day of {monthNames[currentTime.getMonth()]}, {currentTime.getFullYear()}</p>
-              <p>Currently, nothing is happening.</p>
-            </div>
-          </div>
-          <aside className="flex flex-col gap-3 w-1/4 bg-white rounded-lg shadow-lg p-3">
-            <div className="flex w-full justify-between">
-              <p className="poppins-300">Emo</p>
-              <p className="text-gray-300">{currentTime.getDate()}/365</p>
-            </div>
-            <PieChart data={dayliopieData} />
           </aside>
-        </main>
+        </div>
       </div>
     </div>
   );
