@@ -42,7 +42,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
         setUser(userData.user);
         // gets the username
         if (post.sender_id != null) {
-            const { data, error } = await supabase
+            const { data } = await supabase
                 .from('users')
                 .select('*')
                 .eq('id', post.sender_id)

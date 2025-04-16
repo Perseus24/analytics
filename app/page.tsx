@@ -16,7 +16,7 @@ export default function Home() {
 
   useEffect(() => {
     const postsToday = async () => {
-      setLoadingWidth('30%');
+      startLoader();
       const data = await todayPosts();
       setPost(data);
       stopLoader();

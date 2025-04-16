@@ -5,7 +5,11 @@ import Link from 'next/link';
 const Header = ({ username }: { username: string }) => {
     useEffect(() => {
         const isDark = localStorage.getItem('theme') === 'dark';
-        isDark ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark');
+        if(isDark){
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
     }, []);
 
     const toggleDarkMode = () => {
