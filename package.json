@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.47.12",
+    "@vercel/analytics": "^1.5.0",
     "chart.js": "^4.4.7",
     "next": "15.1.4",
     "puppeteer": "^23.11.1",
