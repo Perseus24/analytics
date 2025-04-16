@@ -25,7 +25,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
     useEffect(() => {
         likedPosts();
         getUser();
-    })
+    }, [])
     const likedPosts = async () => {
         const { data } = await supabase
             .from('user_likes')
