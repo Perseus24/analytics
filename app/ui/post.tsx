@@ -16,7 +16,7 @@ const Post: React.FC<{post: Posts}> = ({ post }) => {
     });
 
     const likedPost = async () => {
-        let newLikes = postIsLiked ? likes - 1 : likes + 1;
+        const newLikes = postIsLiked ? likes - 1 : likes + 1;
         setPostIsLiked(!postIsLiked);
         setLikes(newLikes);
 
