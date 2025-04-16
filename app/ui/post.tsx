@@ -1,9 +1,15 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Posts } from '../lib/definitions';
 import { supabase } from '../lib/supabase';
+import { User } from '@supabase/supabase-js';
 
-const Post: React.FC<{post: Posts}> = ({ post }) => {
+type PostProps = {
+    post: Posts;
+}
+
+const Post: React.FC<PostProps> = ({ post }) => {
+    const [user, setUser] = useState<User | null>(null);
     const [likes, setLikes] = useState(post.like_amount);
     const [postIsLiked, setPostIsLiked] = useState(false); 
     const formattedDate = new Date(post.created_at).toLocaleDateString('en-US', {
@@ -14,27 +20,84 @@ const Post: React.FC<{post: Posts}> = ({ post }) => {
         minute: '2-digit',
         hour12: true, 
     });
+    const [username, setUsername] = useState('Anonymous');
 
+    useEffect(() => {
+        likedPosts();
+        getUser();
+    })
+    const likedPosts = async () => {
+        const { data } = await supabase
+            .from('user_likes')
+            .select('*')
+            .eq('user_id', user?.id)
+            .eq('post_id', post.id)
+            .single();
+        if (data) {
+            setPostIsLiked(true);
+        }
+    }
+    const getUser = async () => {
+        const { data:userData} = await supabase.auth.getUser();
+        setUser(userData.user);
+        // gets the username
+        if (post.sender_id != null) {
+            const { data } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', post.sender_id)
+                .single();
+            if (data) {
+                setUsername(data.username);
+            }
+        }
+    };
     const likedPost = async () => {
-        const newLikes = postIsLiked ? likes - 1 : likes + 1;
-        setPostIsLiked(!postIsLiked);
-        setLikes(newLikes);
+        // authenticated users are the only ones allowed to like posts
+        if (user) {
+            const newLikes = postIsLiked ? likes - 1 : likes + 1;
+            const toggledLike = !postIsLiked;
+            setPostIsLiked(toggledLike);
+            setLikes(newLikes);
 
-        const { error } = await supabase
-            .from('posts')
-            .update({ like_amount: newLikes })
-            .eq('id', post.id);
-
-        if (error) {
-            console.error('Failed to update like count:', error.message);
+            // update like count
+            const { error } = await supabase
+                .from('posts')
+                .update({ like_amount: newLikes })
+                .eq('id', post.id);
+            
+            //check if already liked, then remove the entry
+            if (!toggledLike) {
+                const { error } = await supabase
+                    .from('user_likes')
+                    .delete()
+                    .eq('user_id', user.id)
+                    .eq('post_id', post.id);
+                if (error) {
+                    console.error('Failed to remove like:', error.message);
+                }
+            } else {
+                // insert new entry
+                const {  } = await supabase
+                    .from('user_likes')
+                    .insert([{
+                        user_id: user.id,
+                        post_id: post.id
+                    }]);
+                
+            }
+            
+            if (error) {
+                console.error('Failed to update like count:', error.message);
+            }
         }
     };
     return (
-        <div className="flex flex-col gap-4 w-full h-min bg-white rounded-lg shadow-sm px-4 py-3">
+        <div className="flex flex-col gap-4 w-full h-min bg-white rounded-lg shadow-sm px-4 py-3 dark:text-white dark:bg-[#1A1A40]">
             <div className="flex w-full gap-5 text-xs font-medium items-center" >
                 <p className="">{formattedDate}</p>
-                <div className='rounded-full bg-black h-1 w-1'></div>
-                <p className="">Anonymous</p>
+                <div className='rounded-full bg-black h-1 w-1 dark:bg-white'></div>
+                <p className="">{username}</p>
             </div>
             <p>{post.post_text}</p>
             <div className="flex w-full">
