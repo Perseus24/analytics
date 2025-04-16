@@ -22,7 +22,7 @@ export default function Home() {
       stopLoader();
     };
     const getUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
+      const { data } = await supabase.auth.getUser();
       if (data?.user) {
         setUser(data.user);
         const { data:userData } = await supabase 
@@ -40,10 +40,10 @@ export default function Home() {
     postsToday();
   }, []);
 
-  const startLoader:any = function(){
+  const startLoader = function(){
     setLoadingWidth('30%');
   }
-  const stopLoader: any = function(){
+  const stopLoader = function(){
     setLoadingWidth('100%');
     // Reset after delay
     setTimeout(() => {
@@ -87,7 +87,7 @@ export default function Home() {
           <main className="flex flex-col gap-5 w-3/5">
             {
               post.map((post, index) => (
-                <Post key={index} post={post} startLoader={startLoader} stopLoader={stopLoader}/>
+                <Post key={index} post={post} />
               ))
             }
           </main>

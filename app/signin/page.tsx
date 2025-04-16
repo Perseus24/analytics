@@ -5,7 +5,6 @@ import { supabase } from '../lib/supabase';
 const SignIn: React.FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [username, setUsername] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
     const signInUser = async (e: React.FormEvent) => {

@@ -6,11 +6,9 @@ import { User } from '@supabase/supabase-js';
 
 type PostProps = {
     post: Posts;
-    startLoader: () => void;
-    stopLoader: () => void;
 }
 
-const Post: React.FC<PostProps> = ({ post, startLoader, stopLoader }) => {
+const Post: React.FC<PostProps> = ({ post }) => {
     const [user, setUser] = useState<User | null>(null);
     const [likes, setLikes] = useState(post.like_amount);
     const [postIsLiked, setPostIsLiked] = useState(false); 
@@ -29,7 +27,7 @@ const Post: React.FC<PostProps> = ({ post, startLoader, stopLoader }) => {
         getUser();
     })
     const likedPosts = async () => {
-        const { data, error } = await supabase
+        const { data } = await supabase
             .from('user_likes')
             .select('*')
             .eq('user_id', user?.id)
@@ -40,7 +38,7 @@ const Post: React.FC<PostProps> = ({ post, startLoader, stopLoader }) => {
         }
     }
     const getUser = async () => {
-        const { data:userData, error: userError } = await supabase.auth.getUser();
+        const { data:userData} = await supabase.auth.getUser();
         setUser(userData.user);
         // gets the username
         if (post.sender_id != null) {
@@ -80,7 +78,7 @@ const Post: React.FC<PostProps> = ({ post, startLoader, stopLoader }) => {
                 }
             } else {
                 // insert new entry
-                const { error: userError } = await supabase
+                const {  } = await supabase
                     .from('user_likes')
                     .insert([{
                         user_id: user.id,

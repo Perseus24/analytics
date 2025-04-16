@@ -16,7 +16,7 @@ const Register: React.FC = () => {
         });
 
         if(data?.user){
-            const { data: userData, error: userError} = await supabase
+            const {  error: userError} = await supabase
                 .from('users')
                 .insert([{
                     id: data?.user?.id,
