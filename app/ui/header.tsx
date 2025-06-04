@@ -29,8 +29,8 @@ const Header = ({ username }: { username: string }) => {
         <div className='flex justify-between py-2 pt-4 text-black items-center dark:text-white'>
             {/* LINKS */}
             <div className="flex gap-4 items-center ">
-                <a href="/  " className="hover:text-blue-800" >All</a>
-                <a href="/dashboard" className="hover:text-blue-800">Stuffs</a>
+                <a href="/  " className="hover:text-blue-800" >Today</a>
+                <Link href="/all" className="hover:text-blue-800">Stuffs</Link>
                 <a href="/analytics" className="hover:text-blue-800">Analytics</a>
             </div>
             {/* Profile */}

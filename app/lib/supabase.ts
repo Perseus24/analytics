@@ -17,17 +17,10 @@ export const fetchDaylioData = async () => {
 };
 
 export const todayPosts = async () => {
-    const today = new Date();
-    const startOfDay = new Date(today.setHours(0, 0, 0, 0)).toISOString();
-    const endOfDay = new Date(today.setHours(23, 59, 59, 999)).toISOString();
-    console.log(`${startOfDay} - ${endOfDay}`);
     const { data, error } = await supabase
         .from('posts')
         .select('*')
-        .order('created_at', { ascending: false })
-        .gte('created_at', startOfDay)
-        .lte('created_at', endOfDay);
-
+        .order('created_at', { ascending: false });
     if (error) {
         console.error('Error fetching posts:', error.message);
     }
