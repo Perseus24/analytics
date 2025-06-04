@@ -23,18 +23,26 @@ const Post: React.FC<PostProps> = ({ post }) => {
     const [username, setUsername] = useState('Anonymous');
 
     useEffect(() => {
-        likedPosts();
-        getUser();
-    })
+        const fetchLikedPosts = async () => {
+            await getUser();
+            if (user) {
+                await likedPosts();
+            }
+        };
+
+        fetchLikedPosts();
+    }, [user?.id, post?.id]); 
+
     const likedPosts = async () => {
         const { data } = await supabase
             .from('user_likes')
             .select('*')
             .eq('user_id', user?.id)
-            .eq('post_id', post.id)
-            .single();
-        if (data) {
+            .eq('post_id', post.id);
+        if (data && data.length > 0) {
             setPostIsLiked(true);
+        } else {
+            setPostIsLiked(false);
         }
     }
     const getUser = async () => {

@@ -34,6 +34,7 @@ export default function Home() {
             setUsername(userData.username);
         }
       }
+      console.log(data);
     };
 
     getUser();

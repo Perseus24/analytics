@@ -23,3 +23,8 @@ body {
 .debug {
   border: 1px solid red;
 }
+
+.active-link-dev {
+  background-color: #00BFFF;
+  color: white;
+}
