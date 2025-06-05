@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Posts } from '../lib/definitions';
 import { supabase } from '../lib/supabase';
 import { User } from '@supabase/supabase-js';
+import ZoomedImg from './zoomed-img';
 
 type PostProps = {
     post: Posts;
@@ -22,6 +23,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
     });
     const [username, setUsername] = useState('Anonymous');
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [clickedImageUrl, setClickedImageUrl] = useState('');
 
     useEffect(() => {
         const fetchLikedPosts = async () => {
@@ -110,6 +112,10 @@ const Post: React.FC<PostProps> = ({ post }) => {
     const prev = () => {
         setCurrentIndex(prev => (prev === 0 ? post.post_images.length - 1 : prev - 1));
     };
+
+    const handleImageClick = (index: number) => {
+        setClickedImageUrl(post.post_images[index]['image_url']);
+    }
     return (
         <div className="flex flex-col gap-4 w-full h-min bg-white rounded-lg shadow-sm px-4 py-3 dark:text-white dark:bg-[#1A1A40]">
             <div className="flex w-full gap-5 text-xs font-medium items-center" >
@@ -136,6 +142,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
                                         src={image['image_url']}
                                         alt={`Post image ${index + 1}`}
                                         className="h-[540px] w-full rounded-lg  object-contain z-20 relative cursor-zoom-in"
+                                        onClick={() => handleImageClick(index)}
                                     />
                                 </div>
                             ))}
@@ -170,7 +177,11 @@ const Post: React.FC<PostProps> = ({ post }) => {
                     </div>
                 )
             }
-            
+            {
+                clickedImageUrl && (
+                    <ZoomedImg url={clickedImageUrl} setClickedImageUrl={setClickedImageUrl} />
+                )
+            }
             <div className="flex w-full">
                 <div className="flex gap-2 items-center text-[13px] cursor-pointer" onClick={likedPost}>
                     <svg className="w-6 h-6 text-black " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill={postIsLiked ? 'blue' : 'black'} viewBox="0 0 24 24">
