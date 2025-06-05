@@ -32,7 +32,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
 
         fetchLikedPosts();
     }, [user?.id, post?.id]); 
-
+        
     const likedPosts = async () => {
         const { data } = await supabase
             .from('user_likes')
