@@ -60,6 +60,8 @@ const Post: React.FC<PostProps> = ({ post }) => {
             }
         }
     };
+
+    // function to like a post
     const likedPost = async () => {
         // authenticated users are the only ones allowed to like posts
         if (user) {
