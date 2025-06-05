@@ -21,6 +21,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
         hour12: true, 
     });
     const [username, setUsername] = useState('Anonymous');
+    const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
         const fetchLikedPosts = async () => {
@@ -60,7 +61,6 @@ const Post: React.FC<PostProps> = ({ post }) => {
             }
         }
     };
-
     // function to like a post
     const likedPost = async () => {
         // authenticated users are the only ones allowed to like posts
@@ -102,6 +102,14 @@ const Post: React.FC<PostProps> = ({ post }) => {
             }
         }
     };
+
+    const next = () => {
+        setCurrentIndex(prev => (prev + 1) % post.post_images.length);
+    };
+
+    const prev = () => {
+        setCurrentIndex(prev => (prev === 0 ? post.post_images.length - 1 : prev - 1));
+    };
     return (
         <div className="flex flex-col gap-4 w-full h-min bg-white rounded-lg shadow-sm px-4 py-3 dark:text-white dark:bg-[#1A1A40]">
             <div className="flex w-full gap-5 text-xs font-medium items-center" >
@@ -112,19 +120,57 @@ const Post: React.FC<PostProps> = ({ post }) => {
             <p>{post.post_text}</p>
             {
                 post.post_images && post.post_images.length > 0 && (
-                    <div className="text-sm italic">Images unavailable. We are working on this...</div>
+                    <div className='flex w-full border border-gray-200 rounded-lg justify-center items-center group relative overflow-hidden dark:border-gray-50 '>
+                        <div
+                            className="flex w-full h-full transition-transform duration-500 ease-in-out"
+                            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+                        >
+                            {post.post_images.map((image, index) => (
+                                <div key={image['id']} className="relative w-full flex-shrink-0">
+                                    <img
+                                        className="absolute object-cover w-full h-full z-10 blur-xl"
+                                        src={image['image_url']}
+                                        alt=""
+                                    />
+                                    <img
+                                        src={image['image_url']}
+                                        alt={`Post image ${index + 1}`}
+                                        className="h-[540px] w-full rounded-lg  object-contain z-20 relative cursor-zoom-in"
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                        {post.post_images.length > 1 && (
+                            <>
+                                <button
+                                    disabled={currentIndex === 0}
+                                    onClick={prev}
+                                    className={`absolute left-2 top-[50%] translate-y-[-50%] z-30 rounded-full p-2 cursor-pointer ${
+                                        currentIndex === 0
+                                        ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+                                        : 'bg-[#1A1A40] text-white hover:bg-black'
+                                    }`}
+                                    >
+                                    <svg fill="currentColor" height="16" icon-name="left-fill" viewBox="0 0 20 20" width="16" xmlns="http://www.w3.org/2000/svg"><path d="m12.793 19.707-9-9a1 1 0 0 1 0-1.414l9-9 1.414 1.414L5.914 10l8.293 8.293-1.414 1.414Z"></path></svg>
+                                </button>
+
+                                <button
+                                    onClick={next}
+                                    className={`absolute right-2 top-[50%] translate-y-[-50%] z-30 rounded-full p-2 cursor-pointer ${
+                                        currentIndex === post.post_images.length - 1
+                                        ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+                                        : 'bg-[#1A1A40] text-white hover:bg-black'
+                                    }`}
+                                    disabled={currentIndex === post.post_images.length - 1}
+                                    >
+                                    <svg fill="currentColor" height="16" icon-name="right-fill" viewBox="0 0 20 20" width="16" xmlns="http://www.w3.org/2000/svg"><path d="m7.207 19.707-1.414-1.414L14.086 10 5.793 1.707 7.207.293l9 9a1 1 0 0 1 0 1.414l-9 9Z"></path></svg>
+                                </button>
+                            </>
+                        )}
+                    </div>
                 )
             }
-            {/* {
-                post.post_images.map((image, index) => (
-                    <img
-                        key={image['id'] ?? index}
-                        src={image['image_url']}
-                        alt={`Post image ${index + 1}`}
-                        className="w-full h-auto rounded-lg"
-                    />
-                ))
-            } */}
+            
             <div className="flex w-full">
                 <div className="flex gap-2 items-center text-[13px] cursor-pointer" onClick={likedPost}>
                     <svg className="w-6 h-6 text-black " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill={postIsLiked ? 'blue' : 'black'} viewBox="0 0 24 24">
