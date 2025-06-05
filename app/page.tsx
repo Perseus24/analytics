@@ -7,7 +7,6 @@ import { Posts } from './lib/definitions';
 import { supabase } from './lib/supabase';
 import { User } from "@supabase/supabase-js";
 import ThotsFooter from "./ui/thots-footer";
-import Image from "next/image";
 import { convertBlobUrlToFile } from "./lib/utils";
 import { uploadImage } from "./lib/storage/client";
 import ImagePickGallery from "./ui/image-pick-gallery";
@@ -62,8 +61,7 @@ export default function Home() {
       
     }
   }
-
-  const handleUploadImages = () => {
+  const handleUploadImages = (id: any) => {
     startTransition(async () => {
       let urls = [];
       for (const url of imageUrls) {
@@ -71,7 +69,8 @@ export default function Home() {
 
         const {imageUrl, error} = await uploadImage({
           file: imageFile,
-          bucket: 'hobby'
+          bucket: 'hobby',
+          post_id: id
         }) 
 
         if (error) {
@@ -97,7 +96,6 @@ export default function Home() {
   }
 
   const createPost = async () => {
-    handleUploadImages();
     setLoadingWidth('30%');
     const { data, error } = await supabase
       .from('posts')
@@ -117,6 +115,11 @@ export default function Home() {
       setPost((prevPosts) => [data[0], ...prevPosts]);
       setCreatePostText('');
     }
+
+    if(imageUrls.length > 0 && data){
+      handleUploadImages(data[0].id);
+    }
+
     stopLoader();
   };
   
@@ -148,7 +151,7 @@ export default function Home() {
               />
               {/* File input */}
               <input type="file" accept="image/*" disabled={isPending} ref={imageInputRef} multiple hidden onChange={handleImageChange}/>
-              <button type="button" disabled={isPending} className="bg-[#1A1A40] text-white px-4 py-1.5 rounded-lg" onClick={() => imageInputRef.current?.click()}>Select Images</button>
+              <button type="button" disabled={isPending} className="bg-[#1A1A40] text-white px-4 py-1.5 rounded-lg dark:bg-white dark:text-black" onClick={() => imageInputRef.current?.click()}>Select Images</button>
               <ImagePickGallery 
                 imageUrls={imageUrls} 
                 onImageChange={handleImageChange}

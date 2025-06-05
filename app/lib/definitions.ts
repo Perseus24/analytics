@@ -16,5 +16,6 @@ export interface Posts {
     created_at: string,
     post_text: string,
     like_amount: number,
-    comments_amount: number
+    comments_amount: number,
+    post_images: [],
 }
