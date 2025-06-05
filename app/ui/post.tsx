@@ -21,7 +21,6 @@ const Post: React.FC<PostProps> = ({ post }) => {
         hour12: true, 
     });
     const [username, setUsername] = useState('Anonymous');
-    const imageUrls = [];
 
     useEffect(() => {
         const fetchLikedPosts = async () => {
@@ -113,7 +112,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
             <p>{post.post_text}</p>
             {
                 post.post_images && post.post_images.length > 0 && (
-                    <div className="text-sm italic">Images unavailable. We're working on this...</div>
+                    <div className="text-sm italic">Images unavailable. We are working on this...</div>
                 )
             }
             {/* {

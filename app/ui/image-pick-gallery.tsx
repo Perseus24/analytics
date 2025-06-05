@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState }  from "react";
+import React, { useRef }  from "react";
 interface Props {
     imageUrls: string[],
     onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void,

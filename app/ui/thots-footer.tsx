@@ -11,7 +11,7 @@ const ThotsFooter = () => {
                         <a href="#" className="mr-4 hover:underline md:mr-6 ">About</a>
                     </li>
                     <li>
-                        <a href="/developer" className="mr-4 hover:underline md:mr-6">Developer's Profile</a>
+                        <a href="/developer" className="mr-4 hover:underline md:mr-6">{"Developer's Profile"}</a>
                     </li>
                 </ul>
             </div>

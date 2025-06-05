@@ -61,9 +61,9 @@ export default function Home() {
       
     }
   }
-  const handleUploadImages = (id: any) => {
+  const handleUploadImages = (id: number) => {
     startTransition(async () => {
-      let urls = [];
+      const urls = [];
       for (const url of imageUrls) {
         const imageFile = await convertBlobUrlToFile(url);
 
