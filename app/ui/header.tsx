@@ -29,9 +29,9 @@ const Header = ({ username }: { username: string }) => {
         <div className='flex justify-between py-2 pt-4 text-black items-center dark:text-white'>
             {/* LINKS */}
             <div className="flex gap-4 items-center ">
-                <a href="/" className="hover:text-blue-800 active-link-header" >Today</a>
+                <Link href="/" className="hover:text-blue-800 active-link-header" >Today</Link>
                 <Link href="/" className="hover:text-blue-800">Stuffs</Link>
-                <a href="/" className="hover:text-blue-800">Analytics</a>
+                <Link href="/" className="hover:text-blue-800">Analytics</Link>
             </div>
             {/* Profile */}
             <button onClick={toggleDarkMode}>🌓 Toggle Dark Mode</button>
