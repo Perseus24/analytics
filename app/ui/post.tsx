@@ -60,6 +60,8 @@ const Post: React.FC<PostProps> = ({ post }) => {
             }
         }
     };
+
+    // function to like a post
     const likedPost = async () => {
         // authenticated users are the only ones allowed to like posts
         if (user) {
@@ -108,6 +110,21 @@ const Post: React.FC<PostProps> = ({ post }) => {
                 <p className="">{username}</p>
             </div>
             <p>{post.post_text}</p>
+            {
+                post.post_images && post.post_images.length > 0 && (
+                    <div className="text-sm italic">Images unavailable. We are working on this...</div>
+                )
+            }
+            {/* {
+                post.post_images.map((image, index) => (
+                    <img
+                        key={image['id'] ?? index}
+                        src={image['image_url']}
+                        alt={`Post image ${index + 1}`}
+                        className="w-full h-auto rounded-lg"
+                    />
+                ))
+            } */}
             <div className="flex w-full">
                 <div className="flex gap-2 items-center text-[13px] cursor-pointer" onClick={likedPost}>
                     <svg className="w-6 h-6 text-black " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill={postIsLiked ? 'blue' : 'black'} viewBox="0 0 24 24">

@@ -1,18 +1,26 @@
-"use client";
+'use client';
 import Header from "./ui/header";
 import Post from "./ui/post";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, ChangeEvent, useTransition } from 'react';
 import { todayPosts } from "./lib/supabase";
 import { Posts } from './lib/definitions';
 import { supabase } from './lib/supabase';
 import { User } from "@supabase/supabase-js";
+import ThotsFooter from "./ui/thots-footer";
+import { convertBlobUrlToFile } from "./lib/utils";
+import { uploadImage } from "./lib/storage/client";
+import ImagePickGallery from "./ui/image-pick-gallery";
 
 export default function Home() {
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const [user, setUser] = useState<User | null>(null);
   const [username, setUsername] = useState('');
   const [post, setPost] = useState<Posts[]>([]);
   const [createPostText, setCreatePostText] = useState<string>("");
   const [loadingWidth, setLoadingWidth] = useState('0%');
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [isPending, startTransition] = useTransition();
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     const postsToday = async () => {
@@ -41,6 +49,41 @@ export default function Home() {
     postsToday();
   }, []);
 
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if(e.target.files){
+      const filesArray = Array.from(e.target.files);
+      const newImageUrls = filesArray.map((file) => URL.createObjectURL(file));
+      setImageUrls(prev => {
+        const updated = [...prev, ...newImageUrls];
+        setCurrentIndex(updated.length - 1);  // update to last new image
+        return updated;
+      });
+      
+    }
+  }
+  const handleUploadImages = (id: number) => {
+    startTransition(async () => {
+      const urls = [];
+      for (const url of imageUrls) {
+        const imageFile = await convertBlobUrlToFile(url);
+
+        const {imageUrl, error} = await uploadImage({
+          file: imageFile,
+          bucket: 'hobby',
+          post_id: id
+        }) 
+
+        if (error) {
+          console.error(error);
+        } else {
+          urls.push(imageUrl);
+        }
+
+        setImageUrls([]);
+      }
+    })
+
+  }
   const startLoader = function(){
     setLoadingWidth('30%');
   }
@@ -72,11 +115,16 @@ export default function Home() {
       setPost((prevPosts) => [data[0], ...prevPosts]);
       setCreatePostText('');
     }
+
+    if(imageUrls.length > 0 && data){
+      handleUploadImages(data[0].id);
+    }
+
     stopLoader();
   };
   
   return (
-    <div className="flex min-h-screen bg-[#F4F4F8] text-black dark:bg-black pb-5">
+    <div className="flex min-h-screen bg-[#F4F4F8] relative text-black dark:bg-black pb-20 flex-col">
       <div id="loading-indicator" style={{
             width: loadingWidth,
             transition: 'width 0.3s ease-in-out'
@@ -99,16 +147,28 @@ export default function Home() {
                 rows={6}
                 value={createPostText} 
                 onChange={(e) => setCreatePostText(e.target.value)} 
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none dark:bg-[#1A1A40]" placeholder="What's on your mind?" />
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none dark:bg-[#1A1A40]" placeholder="What's on your mind?" 
+              />
+              {/* File input */}
+              <input type="file" accept="image/*" disabled={isPending} ref={imageInputRef} multiple hidden onChange={handleImageChange}/>
+              <button type="button" disabled={isPending} className="bg-[#1A1A40] text-white px-4 py-1.5 rounded-lg dark:bg-white dark:text-black" onClick={() => imageInputRef.current?.click()}>Select Images</button>
+              <ImagePickGallery 
+                imageUrls={imageUrls} 
+                onImageChange={handleImageChange}
+                currentIndex={currentIndex}
+                setCurrentIndex={setCurrentIndex}
+                setImageUrls={setImageUrls}/>
               <div className="w-full flex justify-end">
                 <button 
                   onClick={createPost} 
+                  disabled={isPending}
                   className="px-4 py-1.5 bg-black text-white rounded-lg dark:bg-white dark:text-black">Post</button>
               </div>
             </div>
           </aside>
         </div>
       </div>
+      <ThotsFooter />
     </div>
   );
 }

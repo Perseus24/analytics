@@ -28,3 +28,10 @@ body {
   background-color: #00BFFF;
   color: white;
 }
+
+.active-link-header {
+  color: #00BFFF;
+  font-weight: 600;
+}
+
+
