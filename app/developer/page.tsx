@@ -53,7 +53,7 @@ const DeveloperProfile: React.FC = () => {
             link: "/random-thots"
         }
     ]
-    const [activeTab, setActiveTab] = useState(0);
+    const [activeTab] = useState(0);
     const [isExpInfoHovered, setExpInfoHovered] = useState(false);
     return (
         <div className='w-full flex flex-col  bg-white'>
