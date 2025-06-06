@@ -1,32 +1,40 @@
 "use client";
 import Link from 'next/link';
-import React from 'react';
+import React, { useState } from 'react';
+import {clsx} from "clsx";
+import BackToTopBtn from '../ui/back-to-top-btn';
+import AboutMe from './components/about-me';
 
 const DeveloperProfile: React.FC = () => {
-    const dataNumber = [
+    const devTabs = [
         {
-            title: "21",
-            description: "YEARS OLD"
+            title: "🧑‍💼 ABOUT ME",
+            link: "/"
         },
         {
-            title: "2",
-            description: "YEARS OF EXPERIENCE"
+            title: "🌍 EXPERIENCES",
+            link: "/experiences"
         },
         {
-            title: "1",
-            description: "INTERNSHIP"
+            title: "📚 RESEARCHES",
+            link: "/researches"
         },
         {
-            title: "2",
-            description: "CREDENTIALS"
+            title: "📖 MY LIFE (SO FAR)",
+            link: "/my-life"
         },
         {
-            title: "+40",
-            description: "STRESS DUE TO COURSE TAKEN"
+            title: "🥇 AWARDS",
+            link: "/awards"
         },
-    ];
+        {
+            title: "💭 RANDOM THOTS",
+            link: "/random-thots"
+        }
+    ]
+    const [activeTab] = useState(0);
     return (
-        <div className='w-full flex flex-col  bg-white'>
+        <div className='max-w-screen flex flex-col  bg-white'>
             <div className='w-full h-1 bg-[#00BFFF] shadow-lg'></div>
             <div className='mt-4 px-6 w-full flex justify-between'>
                 <Link href="/" className='font-medium text-gray-500 text-md hover:underline cursor-pointer'>Thots</Link>
@@ -55,51 +63,21 @@ const DeveloperProfile: React.FC = () => {
                     <p className='text-xl text-gray-600 font-semibold'>Software Developer</p>
                 </div>
                 <div className='flex flex-wrap mt-10 text-black justify-evenly w-1/2 text-[13px]'>
-                    <div className='px-4 py-2 border border-[#00BFFF] m-2 active-link-dev tracking-wide'>🧑‍💼 ABOUT ME</div>
-                    <div className='px-4 py-2 border border-[#00BFFF] m-2 tracking-wide'>🌍 EXPERIENCES</div>
-                    <div className='px-4 py-2 border border-[#00BFFF] m-2 tracking-wide'>📚 RESEARCHES</div>
-                    <div className='px-4 py-2 border border-[#00BFFF] m-2 tracking-wide'>📖 MY LIFE (SO FAR)</div>
-                    <div className='px-4 py-2 border border-[#00BFFF] m-2 tracking-wide'>🥇 AWARDS</div>
-                    <div className='px-4 py-2 border border-[#00BFFF] m-2 tracking-wide'>💭 RANDOM THOTS</div>
+                    {
+                        devTabs.map((tab, index) => (
+                            <div key={index} className={clsx(
+                                'px-4 py-2 border border-[#00BFFF] m-2 tracking-wide cursor-pointer ',
+                                activeTab !== index && 'hover:bg-gray-50',
+                                activeTab === index && 'active-link-dev'
+                            )}>{tab.title}</div>
+                        ))
+                    }
                 </div>
             </div>
-            <div className="h-full w-full flex flex-col items-center">
-                <div className='flex gap-10 w-full justify-center'>
-                    <img className='w-96 h-96 rounded-full shadow-lg' src="/images/cy-profile.jpg" alt="Profile" />
-                    <div className='flex flex-col text-black justify-center items-center w-2/5'>
-                        <p className="text-sm mb-2">Just in case you forget who I am...</p>
-                        <h1 className='text-4xl  font-extrabold'>Cy Jay Herrera</h1>
-                        <p className='text-xl text-gray-600 font-semibold'>Currently Graduating ComSci</p>
-                        <p className="text-md mt-10 indent-10 text-justify">I am a 4th year student at the Bicol University, studying BS in Computer Science. I am currently focused on web and system development
-                            especially since our thesis revolved in that field.
-                        </p>
-                    </div>
-                </div>
-                <div className='mt-16 w-full flex flex-col items-center text-black'>
-                    <div className='flex flex-wrap  justify-evenly w-3/5'>
-                        {
-                            dataNumber.map((item, index) => (
-                                <div key={index} className='flex flex-col items-center m-3'>
-                                    <h1 className='text-7xl font-extrabold text-[#00BFFF]'>{item.title}</h1>
-                                    <p className='text-xl font-semibold'>{item.description}</p>
-                                </div>
-                            ))
-                        }
-                    </div>
-                </div>
-            </div>
-            <div className='mt-20 mb-10 h-full w-full flex flex-col items-center'>
-                <div className='border border-gray-100 flex flex-col'>
-                    <img className='h-[600px] shadow-lg' src="/images/scholar-pic.jpg" alt="Scholar Batch 2025" />
-                    <div className='bg-[#00BFFF] flex flex-col px-4 py-2'>
-                        <p className='flex justify-between'>
-                            <span>Scholar Batch 2025</span>
-                            <span className='text-sm'>Bicol University - Main Campus</span>
-                            </p>
-                        <p className='text-sm'>28 May 2025</p>
-                    </div>
-                </div>
-            </div>
+            {
+                activeTab === 0 && <AboutMe />
+            }
+            <BackToTopBtn />
             <div className='w-full h-1 bg-[#00BFFF] shadow-lg'></div>
         </div>
     );
