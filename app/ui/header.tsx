@@ -35,7 +35,7 @@ const Header = ({ username }: { username: string }) => {
             </div>
             {/* Profile */}
             <button onClick={toggleDarkMode}>🌓 Toggle Dark Mode</button>
-            <button className="flex items-center rounded-full py-1 h-min border border-gray-300 text-sm pl-2 pr-3 gap-2 ">
+            <button className="hidden md:flex items-center rounded-full py-1 h-min border border-gray-300 text-sm pl-2 pr-3 gap-2 ">
                 <div className="h-6 w-6 rounded-full bg-black dark:bg-white"></div>
                 <span>
                     {

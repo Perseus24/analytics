@@ -10,6 +10,7 @@ import ThotsFooter from "./ui/thots-footer";
 import { convertBlobUrlToFile } from "./lib/utils";
 import { uploadImage } from "./lib/storage/client";
 import ImagePickGallery from "./ui/image-pick-gallery";
+import BackToTopBtn from "./ui/back-to-top-btn";
 
 export default function Home() {
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -132,15 +133,15 @@ export default function Home() {
           className="w-full h-2 bg-green-500 absolute top-0"></div>
       <div className="px-10 w-full flex flex-col gap-5 ">
         <Header username={username}/>
-        <div className="flex gap-10">
-          <main className="flex flex-col gap-5 w-3/5">
+        <div className="flex flex-col md:flex-row gap-10">
+          <main className="flex flex-col gap-5 md:w-3/5">
             {
               post.map((post, index) => (
                 <Post key={index} post={post} />
               ))
             }
           </main>
-          <aside className="flex flex-col w-2/5 h-min">
+          <aside className="flex flex-col md:w-2/5 h-min mb-10 md:mb-0">
             <div className="flex flex-col gap-4 w-full bg-white rounded-lg shadow-sm px-4 py-3 text-[13px] dark:bg-[#1A1A40] dark:text-white">
               <p className="">{username? `@${username}` : 'Anonymous'}</p>
               <textarea 
@@ -168,6 +169,7 @@ export default function Home() {
           </aside>
         </div>
       </div>
+      <BackToTopBtn />
       <ThotsFooter />
     </div>
   );
