@@ -20,7 +20,7 @@ export default function Home() {
   const [createPostText, setCreatePostText] = useState<string>("");
   const [loadingWidth, setLoadingWidth] = useState('0%');
   const [imageUrls, setImageUrls] = useState<string[]>([]);
-  const [isPending, startTransition] = useTransition();
+  const [isPending] = useTransition();
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
