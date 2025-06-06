@@ -20,7 +20,7 @@ export default function Home() {
   const [createPostText, setCreatePostText] = useState<string>("");
   const [loadingWidth, setLoadingWidth] = useState('0%');
   const [imageUrls, setImageUrls] = useState<string[]>([]);
-  const [isPending, startTransition] = useTransition();
+  const [isPending] = useTransition();
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -45,10 +45,15 @@ export default function Home() {
       }
       console.log(data);
     };
+    console.log("Updated post:", post);
 
     getUser();
     postsToday();
   }, []);
+
+  const scrollToTop = () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     if(e.target.files){
@@ -62,29 +67,28 @@ export default function Home() {
       
     }
   }
-  const handleUploadImages = (id: number) => {
-    startTransition(async () => {
-      const urls = [];
-      for (const url of imageUrls) {
-        const imageFile = await convertBlobUrlToFile(url);
 
-        const {imageUrl, error} = await uploadImage({
-          file: imageFile,
-          bucket: 'hobby',
-          post_id: id
-        }) 
+  const handleUploadImages = async (id: number) => {
+    const urls = [];
+    for (const url of imageUrls) {
+      const imageFile = await convertBlobUrlToFile(url);
 
-        if (error) {
-          console.error(error);
-        } else {
-          urls.push(imageUrl);
-        }
+      const { imageUrl, error } = await uploadImage({
+        file: imageFile,
+        bucket: 'hobby',
+        post_id: id
+      });
 
-        setImageUrls([]);
+      if (error) {
+        console.error(error);
+      } else {
+        urls.push(imageUrl);
       }
-    })
+    }
 
-  }
+    setImageUrls([]);
+    return urls;
+  };
   const startLoader = function(){
     setLoadingWidth('30%');
   }
@@ -112,16 +116,36 @@ export default function Home() {
 
     if (error) {
       console.error('Error creating post:', error.message);
-    } else {
-      setPost((prevPosts) => [data[0], ...prevPosts]);
-      setCreatePostText('');
+      stopLoader();
+      return;
+    } 
+    
+    const newPost = data[0];
+    setCreatePostText('');
+    if(imageUrls.length > 0 && newPost){
+      await handleUploadImages(newPost.id);
     }
 
-    if(imageUrls.length > 0 && data){
-      handleUploadImages(data[0].id);
+    // once done with writing to the database
+    const {data: uploadedPost, error: uploadPostError } = await supabase  
+      .from('posts')
+      .select(`
+          *,
+          post_images(*)
+      `)
+      .eq('id', newPost.id)
+      .single();
+
+    if (uploadPostError) {
+      console.error('Error uploading images:', uploadPostError.message);
+      stopLoader();
+      return;
     }
+
+    setPost((prevPosts) => [uploadedPost, ...prevPosts]);
 
     stopLoader();
+    scrollToTop();
   };
   
   return (
@@ -130,8 +154,8 @@ export default function Home() {
             width: loadingWidth,
             transition: 'width 0.3s ease-in-out'
           }} 
-          className="w-full h-2 bg-green-500 absolute top-0"></div>
-      <div className="px-10 w-full flex flex-col gap-5 ">
+          className="w-full h-2 bg-green-500 fixed top-0"></div>
+      <div className="px-5 md:px-10 w-full flex flex-col gap-5 ">
         <Header username={username}/>
         <div className="flex flex-col md:flex-row gap-10">
           <main className="flex flex-col gap-5 md:w-3/5">

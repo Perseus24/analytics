@@ -141,7 +141,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
                                     <img
                                         src={image['image_url']}
                                         alt={`Post image ${index + 1}`}
-                                        className="h-[540px] w-full rounded-lg  object-contain z-20 relative cursor-zoom-in"
+                                        className="h-60 md:h-[540px] w-full rounded-lg  object-contain z-20 relative cursor-zoom-in"
                                         onClick={() => handleImageClick(index)}
                                     />
                                 </div>

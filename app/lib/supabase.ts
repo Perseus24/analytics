@@ -43,10 +43,6 @@ export const todayPosts = async () => {
     if (error) {
         console.error('Error fetching posts:', error.message);
     }
-
-    if(data){
-        console.log(data[0]);
-    }
     return data || [];
 };
 
