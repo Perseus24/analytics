@@ -37,7 +37,10 @@ const DeveloperProfile: React.FC = () => {
         <div className='max-w-screen flex flex-col  bg-white'>
             <div className='w-full h-1 bg-[#00BFFF] shadow-lg'></div>
             <div className='mt-4 px-6 w-full flex justify-between'>
-                <Link href="/" className='font-medium text-gray-500 text-md hover:underline cursor-pointer'>Thots</Link>
+                <div className="flex gap-4">
+                    <Link href="/" className='font-medium text-gray-500 text-md hover:underline cursor-pointer'>Thots</Link>
+                    <Link href="https://projectrackr.vercel.app/" className='font-medium text-gray-500 text-md hover:underline cursor-pointer'>ProjectTrackr</Link>
+                </div>
                 <div className="flex">
                     <Link href="https://www.linkedin.com/in/cy-jay-herrera-74b297268/" target="_blank" rel="noopener noreferrer">
                         <svg className="cursor-pointer w-7 h-7 text-[#00BFFF] dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
@@ -76,7 +79,7 @@ const DeveloperProfile: React.FC = () => {
             </div>
             {
                 activeTab === 0 && <AboutMe />
-            }
+            } 
             <BackToTopBtn />
             <div className='w-full h-1 bg-[#00BFFF] shadow-lg'></div>
         </div>
